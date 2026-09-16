@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import SimulationControls from "./SimulationControls";
 import { PhysicsState, updatePhysics } from "@/types/physics";
+import PhysicsCanvas from "@/components/PhysicsCanvas";
 
 export default function PhysicsPlayground() {
 //   const [position, setPosition] = useState(0);
@@ -74,29 +75,7 @@ export default function PhysicsPlayground() {
       <p>Position: {physicsState.position.toFixed(2)}</p>
       <p>Velocity: {physicsState.velocity.toFixed(2)}</p>
 
-      <div
-        style={{
-          width: "400px",
-          height: "300px",
-          border: "2px solid black",
-          position: "relative",
-          marginTop: "20px",
-          overflow: "hidden",
-        }}
-      >
-        <div
-          style={{
-            width: "40px",
-            height: "40px",
-            borderRadius: "50%",
-            backgroundColor: "red",
-            position: "absolute",
-            left: "50%",
-            bottom: `${physicsState.position}px`,
-            transform: "translateX(-50%)",
-          }}
-        />
-      </div>
+      <PhysicsCanvas physicsState={physicsState} />
     </main>
   );
 }
