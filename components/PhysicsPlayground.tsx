@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import SimulationControls from "./SimulationControls";
 import { PhysicsState, updatePhysics } from "@/types/physics";
+import PhysicsCanvas from "@/components/PhysicsCanvas";
 
 export default function PhysicsPlayground() {
 //   const [position, setPosition] = useState(0);
@@ -11,10 +12,18 @@ export default function PhysicsPlayground() {
         position: 200,
         velocity: 0,
     });
-  const [isRunning, setIsRunning] = useState(false);
+    const [isRunning, setIsRunning] = useState(false);
+    const reset = () => {
+        setPhysicsState({
+            position: 200,
+            velocity: 0,
+        });
 
+  setIsRunning(false);
+};
   const [gravity, setGravity] = useState(9.81);
-
+  const [restitution, setRestitution] = useState(0.7);
+  const [mass, setMass] = useState(1);
   const lastTime = useRef<number | null>(null);
 
   useEffect(() => {
@@ -34,25 +43,8 @@ export default function PhysicsPlayground() {
       const deltaTime = (currentTime - lastTime.current) / 1000;
       lastTime.current = currentTime;
 
-    //   setVelocity((currentVelocity) => {
-    //     const newVelocity = currentVelocity - gravity * deltaTime;
-
-    //     setPosition((currentPosition) => {
-    //         const newPosition =
-    //             currentPosition + newVelocity * deltaTime;
-
-    //         if (newPosition <= 0) {
-    //             return 0;
-    //         }
-
-    //         return newPosition;
-    //     });
-
-    //     return newVelocity;
-    //   });
-
         setPhysicsState((currentState) =>
-            updatePhysics(currentState, gravity, deltaTime)
+            updatePhysics(currentState, gravity, deltaTime, restitution,mass)
         );
 
       animationFrameId = requestAnimationFrame(animate);
@@ -68,39 +60,22 @@ export default function PhysicsPlayground() {
   return (
     <main style={{ padding: "40px" }}>
       <h1>Physics Playground</h1>
-      render the controls for gravity and IsRunning 
+      {/* render the controls for gravity and IsRunning  */}
        <SimulationControls
            gravity={gravity}
            setGravity={setGravity}
            isRunning={isRunning}
            setIsRunning={setIsRunning}
+           reset={reset}    
+           restitution={restitution}
+            setRestitution={setRestitution}
+           mass={mass}
+           setMass={setMass}
        />
       <p>Position: {physicsState.position.toFixed(2)}</p>
       <p>Velocity: {physicsState.velocity.toFixed(2)}</p>
 
-      <div
-        style={{
-          width: "400px",
-          height: "300px",
-          border: "2px solid black",
-          position: "relative",
-          marginTop: "20px",
-          overflow: "hidden",
-        }}
-      >
-        <div
-          style={{
-            width: "40px",
-            height: "40px",
-            borderRadius: "50%",
-            backgroundColor: "red",
-            position: "absolute",
-            left: "50%",
-            bottom: `${physicsState.position}px`,
-            transform: "translateX(-50%)",
-          }}
-        />
-      </div>
+      <PhysicsCanvas physicsState={physicsState} />
     </main>
   );
 }
